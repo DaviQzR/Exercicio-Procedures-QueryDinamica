@@ -3,7 +3,7 @@ GO
 USE QueryDinamica
 GO
 
--- Criar a tabela Produto (se ainda não existir)
+-- Criar a tabela Produto 
 CREATE TABLE Produto (
     Codigo INT PRIMARY KEY,
     Nome VARCHAR(100),
@@ -22,7 +22,7 @@ INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1008, 'Moletom', 69.99);
 INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1009, 'Boné', 19.99);
 INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1010, 'Meia Pack 3 Unidades', 9.99);
  
--- Criar a tabela ENTRADA (se ainda não existir)
+-- Criar a tabela ENTRADA 
 CREATE TABLE  entrada (
     Codigo_Transacao INT PRIMARY KEY,
     Codigo_Produto INT,
@@ -30,7 +30,7 @@ CREATE TABLE  entrada (
     Valor_Total DECIMAL(10, 2)
 );
  
--- Criar a tabela SAIDA (se ainda não existir)
+-- Criar a tabela SAIDA 
 CREATE TABLE  saida (
     Codigo_Transacao INT PRIMARY KEY,
     Codigo_Produto INT,
@@ -85,8 +85,6 @@ BEGIN
         SET @saida = @mensagem;
     END CATCH;
 END;
- 
--- Testando a stored procedure com diferentes cenários
  
 -- Variáveis para armazenar a saída
 DECLARE @saida VARCHAR(300);
