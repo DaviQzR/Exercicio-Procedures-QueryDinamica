@@ -1,10 +1,10 @@
-CREATE DATABASE querydinamica
+CREATE  DATABASE QueryDinamica
 GO
-USE querydinamica
+USE QueryDinamica
 GO
 
--- Criar a tabela Produto (se ainda n„o existir)
-CREATE TABLE  Produto (
+-- Criar a tabela Produto (se ainda n√£o existir)
+CREATE TABLE Produto (
     Codigo INT PRIMARY KEY,
     Nome VARCHAR(100),
     Valor DECIMAL(10, 2)
@@ -12,25 +12,33 @@ CREATE TABLE  Produto (
  
 -- Inserir alguns produtos para testar
 INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1001, 'Camiseta', 29.99);
-INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1002, 'CalÁa Jeans', 59.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1002, 'Cal√ßa Jeans', 59.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1003, 'T√™nis Esportivo', 99.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1004, 'Shorts', 39.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1005, 'Vestido Floral', 79.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1006, 'Sapato Social', 89.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1007, 'Blusa de Frio', 49.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1008, 'Moletom', 69.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1009, 'Bon√©', 19.99);
+INSERT INTO Produto (Codigo, Nome, Valor) VALUES (1010, 'Meia Pack 3 Unidades', 9.99);
  
--- Criar a tabela ENTRADA (se ainda n„o existir)
-CREATE TABLE  ENTRADA (
+-- Criar a tabela ENTRADA (se ainda n√£o existir)
+CREATE TABLE  entrada (
     Codigo_Transacao INT PRIMARY KEY,
     Codigo_Produto INT,
     Quantidade INT,
     Valor_Total DECIMAL(10, 2)
 );
  
--- Criar a tabela SAIDA (se ainda n„o existir)
-CREATE TABLE  SAIDA (
+-- Criar a tabela SAIDA (se ainda n√£o existir)
+CREATE TABLE  saida (
     Codigo_Transacao INT PRIMARY KEY,
     Codigo_Produto INT,
     Quantidade INT,
     Valor_Total DECIMAL(10, 2)
 );
  
--- Criar a stored procedure para inserÁ„o de transaÁıes
+-- Criar a stored procedure para inser√ß√£o de transa√ß√µes
 CREATE PROCEDURE sp_inserir_transacao (
     @tipo CHAR(1),
     @codigo_transacao INT,
@@ -43,21 +51,21 @@ BEGIN
     DECLARE @tabela VARCHAR(10);
     DECLARE @mensagem VARCHAR(80);
     
-    -- Verificar se o tipo de transaÁ„o È v·lido ('e' para entrada e 's' para saÌda)
+    -- Verificar se o tipo de transa√ß√£o √© v√°lido ('e' para entrada e 's' para sa√≠da)
     IF @tipo = 'e'
     BEGIN
-        SET @tabela = 'ENTRADA';
+        SET @tabela = 'entrada';
     END
     ELSE IF @tipo = 's'
     BEGIN
-        SET @tabela = 'SAIDA';
+        SET @tabela = 'saida';
     END
     ELSE
     BEGIN
-        -- Tipo de transaÁ„o inv·lido
-        SET @mensagem = 'Tipo de transaÁ„o inv·lido. Use ''e'' para ENTRADA ou ''s'' para SAÕDA.';
+        -- Tipo de transa√ß√£o inv√°lido
+        SET @mensagem = 'Tipo de transa√ß√£o inv√°lido. Use ''e'' para ENTRADA ou ''s'' para SA√çDA.';
         SET @saida = @mensagem;
-        RETURN; -- Encerrar a execuÁ„o da procedure
+        RETURN; -- Encerrar a execu√ß√£o da procedure
     END
  
     -- Inserir na tabela correspondente
@@ -69,29 +77,32 @@ BEGIN
     
     BEGIN TRY
         EXEC sp_executesql @query, N'@codigo_transacao INT, @codigo_produto INT, @quantidade INT, @valor_total DECIMAL(10, 2)', @codigo_transacao, @codigo_produto, @quantidade, @valor_total;
-        SET @mensagem = 'TransaÁ„o inserida com sucesso em ' + @tabela;
+        SET @mensagem = 'Transa√ß√£o inserida com sucesso em ' + @tabela;
         SET @saida = @mensagem;
     END TRY
     BEGIN CATCH
-        SET @mensagem = 'Erro ao inserir transaÁ„o em ' + @tabela + ': ' + ERROR_MESSAGE();
+        SET @mensagem = 'Erro ao inserir transa√ß√£o em ' + @tabela + ': ' + ERROR_MESSAGE();
         SET @saida = @mensagem;
     END CATCH;
 END;
  
--- Testando a stored procedure com diferentes cen·rios
+-- Testando a stored procedure com diferentes cen√°rios
  
--- Vari·veis para armazenar a saÌda
+-- Vari√°veis para armazenar a sa√≠da
 DECLARE @saida VARCHAR(300);
  
--- Testando inserÁ„o de transaÁıes v·lidas
-EXEC sp_inserir_transacao 'e', 1, 1001, 5, @saida OUTPUT; -- Inserir transaÁ„o de entrada
-PRINT @saida; -- Exibir a mensagem de saÌda
+-- Testando inser√ß√£o de transa√ß√µes v√°lidas
+EXEC sp_inserir_transacao 'e', 1, 1001, 5, @saida OUTPUT; -- Inserir transa√ß√£o de entrada
+PRINT @saida; -- Exibir a mensagem de sa√≠da
 
-DECLARE @saida VARCHAR(300)
-EXEC sp_inserir_transacao 's', 2, 1002, 3, @saida OUTPUT; -- Inserir transaÁ„o de saÌda
-PRINT @saida; -- Exibir a mensagem de saÌda
+DECLARE @saida VARCHAR(300);
+SET @saida = NULL -- Resetar a vari√°vel de sa√≠da para o pr√≥ximo teste
+EXEC sp_inserir_transacao 's', 2, 1002, 3, @saida OUTPUT; -- Inserir transa√ß√£o de sa√≠da
+PRINT @saida; -- Exibir a mensagem de sa√≠da
  
--- Exibir os dados das tabelas para verificar as inserÁıes
-SELECT * FROM Produto;
-SELECT * FROM ENTRADA;
-SELECT * FROM SAIDA;
+-- Exibir os dados das tabelas para verificar as inser√ß√µes
+SELECT * FROM Produto
+SELECT * FROM ENTRADA
+SELECT * FROM SAIDA
+
+
